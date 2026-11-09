@@ -1,0 +1,18 @@
+project_id = "holy-sites-operations"
+
+[auth.email]
+enable_confirmations = false
+# Applies to local/CLI configuration. For the hosted project, switch off
+# Confirm email in Dashboard > Authentication > Sign In / Providers > Email.
+
+[functions.billing]
+verify_jwt = false
+# billing validates the user JWT with Auth.getUser inside the function.
+
+[functions.notify-email]
+verify_jwt = false
+# Authenticated with a private webhook bearer secret, never the public API key.
+
+[functions.stripe-webhook]
+verify_jwt = false
+# Authenticated using Stripe HMAC signature verification.

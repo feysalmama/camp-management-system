@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["ES2022", "DOM"],
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "noEmit": true,
+    "strict": true,
+    "skipLibCheck": true,
+    "allowImportingTsExtensions": true
+  },
+  "include": ["supabase/functions/**/*.ts", "types/edge.d.ts"]
+}
