@@ -73,9 +73,23 @@ Push this directory to your own GitHub repository. In Cloudflare choose **Worker
 | Node version | `22` |
 | Build environment | The same public `VITE_` values as above |
 
-Use the generated `pages.dev` address for a free domain. A custom domain is optional. The included `_redirects` supports direct page links and password reset routes. `_headers` supplies browser security headers; if you use a custom Supabase domain, update its `connect-src` and `img-src` entries before deploying.
+Use the generated `pages.dev` address for a free domain. A custom domain is optional. Pages serves this application with its default SPA fallback when there is no top-level `404.html`; no catch-all `_redirects` rule is needed. `_headers` supplies browser security headers; if you use a custom Supabase domain, update its `connect-src` and `img-src` entries before deploying.
 
 Alternatively, use Cloudflare Pages **Direct Upload** and upload `release/manasik-cloudflare-pages.zip`. This package is already built with the configured public Supabase settings; it contains no service-role key. For later frontend changes, rebuild and replace the uploaded package. Git integration is preferable for automatic future updates.
+
+### If you created a Worker with Git integration instead of Pages
+
+The included `wrangler.jsonc` supports the Worker named `camp-management-system` with static assets from `dist` and `not_found_handling: single-page-application`. Keep the existing Vite configuration; no Cloudflare Vite plugin is needed for this static frontend. Do not reintroduce `public/_redirects` with `/* /index.html 200`, because Workers rejects that rule as an infinite loop.
+
+Under the Worker's **Settings → Build**, use:
+
+- Build command: `npm run build`
+- Deploy command: `npx wrangler deploy`
+- Build variables: `VITE_SUPABASE_URL`, `VITE_SUPABASE_PUBLISHABLE_KEY`, and `VITE_BILLING_ENABLED=false`.
+
+Set the two Supabase values from your local `.env.local`. They must be **build variables**, not only runtime Worker variables: Vite embeds them into browser JavaScript. A production build now fails explicitly when they are missing, instead of publishing a disconnected login page. `.env.local` is intentionally ignored by Git.
+
+Commit and push the routing/configuration changes to your connected repository, then retry the deployment. The Worker will use its generated `workers.dev` address; add that actual address to Supabase URL configuration just as you would a Pages domain.
 
 See [Cloudflare build settings](https://developers.cloudflare.com/pages/configuration/build-configuration/). After deployment, add its actual URL to Supabase authentication settings and test an email confirmation and password reset on that domain.
 
